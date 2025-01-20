@@ -267,6 +267,10 @@ fn main() {
     if cfg!(feature = "cuda") {
         config.define("GGML_CUDA", "ON");
     }
+    if cfg!(target_os = "linux") && cfg!(feature = "cuda") {
+        println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
+        println!("cargo:rustc-link-lib=dylib=cuda");
+    }
 
     if cfg!(feature = "openmp") {
         config.define("GGML_OPENMP", "ON");
