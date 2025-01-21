@@ -252,34 +252,38 @@ impl LlamaSampler {
     ///
     /// # Panics
     /// If any string in ``seq_breakers`` contains null bytes.
-    // #[allow(missing_docs)]
-    // #[must_use]
-    // pub fn dry(
-    //     model: &LlamaModel,
-    //     multiplier: f32,
-    //     base: f32,
-    //     allowed_length: i32,
-    //     penalty_last_n: i32,
-    //     seq_breakers: impl IntoIterator<Item = impl AsRef<[u8]>>,
-    // ) -> Self {
-    //     let seq_breakers: Vec<CString> = seq_breakers
-    //         .into_iter()
-    //         .map(|s| CString::new(s.as_ref()).unwrap())
-    //         .collect();
-    //     let mut seq_breaker_pointers: Vec<*const CChar> =
-    //         seq_breakers.iter().map(|s| s.as_ptr()).collect();
-    //
-    //     let sampler = unsafe {
-    //         llama_cpp_sys_2::llama_sampler_init_dry(
-    //             llama_cpp_sys_2::llama_model_get_vocab(model.model.as_ptr()),
-    //             allowed_length,
-    //             penalty_last_n,
-    //             seq_breaker_pointers.as_mut_ptr(),
-    //             seq_breaker_pointers.len(),
-    //         )
-    //     };
-    //     Self { sampler }
-    // }
+    #[allow(missing_docs)]
+    #[must_use]
+    pub fn dry(
+        model: &LlamaModel,
+        n_ctx_train: i32,
+        dry_multiplier: f32,
+        dry_base: f32,
+        dry_allowed_length: i32,
+        dry_penalty_last_n: i32,
+        seq_breakers: impl IntoIterator<Item = impl AsRef<[u8]>>,
+    ) -> Self {
+        let seq_breakers: Vec<CString> = seq_breakers
+            .into_iter()
+            .map(|s| CString::new(s.as_ref()).unwrap())
+            .collect();
+        let mut seq_breaker_pointers: Vec<*const CChar> =
+            seq_breakers.iter().map(|s| s.as_ptr()).collect();
+
+        let sampler = unsafe {
+            llama_cpp_sys_2::llama_sampler_init_dry(
+                llama_cpp_sys_2::llama_model_get_vocab(model.model.as_ptr()),
+                n_ctx_train,
+                dry_multiplier,
+                dry_base,
+                dry_allowed_length,
+                dry_penalty_last_n,
+                seq_breaker_pointers.as_mut_ptr(),
+                seq_breaker_pointers.len(),
+            )
+        };
+        Self { sampler }
+    }
 
     /// Penalizes tokens for being present in the context.
     ///
