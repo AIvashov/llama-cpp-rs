@@ -151,15 +151,16 @@ fn main() {
     let llama_dst = out_dir.join("llama.cpp");
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR");
     let llama_src = Path::new(&manifest_dir).join("llama.cpp");
-    let build_shared_libs = cfg!(feature = "cuda") || cfg!(feature = "dynamic-link");
-
+    // let build_shared_libs = cfg!(feature = "cuda") || cfg!(feature = "dynamic-link");
+    let build_shared_libs= false;
     let build_shared_libs = std::env::var("LLAMA_BUILD_SHARED_LIBS")
         .map(|v| v == "1")
         .unwrap_or(build_shared_libs);
     let profile = env::var("LLAMA_LIB_PROFILE").unwrap_or("Release".to_string());
+    let static_crt = true;
     let static_crt = env::var("LLAMA_STATIC_CRT")
         .map(|v| v == "1")
-        .unwrap_or(false);
+        .unwrap_or(static_crt);
 
     debug_log!("TARGET: {}", target);
     debug_log!("CARGO_MANIFEST_DIR: {}", manifest_dir);

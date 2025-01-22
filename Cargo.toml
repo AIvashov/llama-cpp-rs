@@ -3,8 +3,8 @@ resolver = "2"
 members = [
     "llama-cpp-sys-2",
     "llama-cpp-2",
-    "examples/embeddings",
-    "examples/simple",
+#    "examples/embeddings",
+#    "examples/simple",
 ]
 
 [workspace.dependencies]
