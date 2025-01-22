@@ -269,8 +269,20 @@ fn main() {
         config.define("GGML_CUDA", "ON");
     }
     if cfg!(target_os = "linux") && cfg!(feature = "cuda") {
+        println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
         println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
         println!("cargo:rustc-link-lib=dylib=cuda");
+        if build_shared_libs {
+            println!("cargo:rustc-link-lib=dylib=cudart");
+            println!("cargo:rustc-link-lib=dylib=cublas");
+            println!("cargo:rustc-link-lib=dylib=cublasLt");
+        } else {
+            println!("cargo:rustc-link-lib=static=cudart_static");
+            println!("cargo:rustc-link-lib=static=cublas_static");
+            println!("cargo:rustc-link-lib=static=cublasLt_static");
+            println!("cargo:rustc-link-lib=static=culibos");
+            println!("cargo:rustc-link-lib=static=cudadevrt");
+        }
     }
 
     if cfg!(feature = "openmp") {
