@@ -98,7 +98,18 @@ jobs:
           echo "CUDA_PATH=$cudaPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "CUDA_PATH_V${cudaVer}=$cudaPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "CUDA_PATH_VX_Y=CUDA_PATH_V${cudaVer}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
+      - name: List CUDA Directories
+        run: |
+          echo "Listing contents of CUDA directories..."
+          
+          echo "Bin directory:"
+          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\bin"
+          
+          echo "Include directory:"
+          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\include"
+          
+          echo "Lib directory:"
+          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\lib\x64"
       - name: Build
         run: cargo build --release --features cuda -vv
 
