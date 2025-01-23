@@ -281,8 +281,8 @@ fn main() {
                 panic!("nvcc not found at {}", nvcc_path.display());
             }
 
-            debug_log!(format!("Cuda path {}", &cuda_path));
-            debug_log!(format!("nvcc path {}", &nvcc_path));
+            debug_log!("{}", format!("Cuda path {}", &cuda_path));
+            debug_log!("{}", format!("nvcc path {}", &nvcc_path));
 
             config.define("CMAKE_CUDA_COMPILER", nvcc_path.display().to_string());
 
