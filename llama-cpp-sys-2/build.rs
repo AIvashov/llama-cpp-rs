@@ -276,7 +276,7 @@ fn main() {
             let cuda_path = env::var("CUDA_PATH")
                 .expect("Please ensure that CUDA_PATH env variable is set");
 
-            let nvcc_path = Path::new(&cuda_path).join("bin/nvcc.exe");
+            let nvcc_path = Path::new(&cuda_path).join("bin").join("nvcc.exe");
             if !nvcc_path.exists() {
                 panic!("nvcc not found at {}", nvcc_path.display());
             }
@@ -284,10 +284,15 @@ fn main() {
             debug_log!("{}", format!("Cuda path {}", &cuda_path));
             debug_log!("{}", format!("nvcc path {}", nvcc_path.display()));
 
-            config.define("CMAKE_CUDA_COMPILER", nvcc_path.display().to_string());
+            config.define("CMAKE_CUDA_COMPILER", cuda_path.clone());
+            config.define(
+                "CMAKE_GENERATOR_TOOLSET",
+                format!("cuda={}", &cuda_path)
+            );
 
-            let cuda_lib_path = Path::new(&cuda_path).join("lib/x64");
+            let cuda_lib_path = Path::new(&cuda_path).join("lib").join("x64");
             println!("cargo:rustc-link-search=native={}", cuda_lib_path.display());
+            debug_log!("{}", format!("cuda_lib_path path {}", cuda_lib_path.display()));
         }
 
         println!("cargo:rustc-link-lib=dylib=cuda");
