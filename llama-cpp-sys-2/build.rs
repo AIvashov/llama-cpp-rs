@@ -268,9 +268,15 @@ fn main() {
     if cfg!(feature = "cuda") {
         config.define("GGML_CUDA", "ON");
     }
-    if cfg!(target_os = "linux") && cfg!(feature = "cuda") {
-        println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
-        println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
+    if cfg!(feature = "cuda") {
+        if cfg!(target_os = "linux") {
+            println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
+            println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
+        }
+        // if cfg!(target_os = "windows") {
+        //
+        // }
+
         println!("cargo:rustc-link-lib=dylib=cuda");
         if build_shared_libs {
             println!("cargo:rustc-link-lib=dylib=cudart");

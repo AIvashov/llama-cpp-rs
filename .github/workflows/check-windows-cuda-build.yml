@@ -73,16 +73,16 @@ jobs:
         with:
           path: cuda-install.exe
           key: https://developer.download.nvidia.com/compute/cuda/12.4.0/local_installers/cuda_12.4.0_551.61_windows.exe
-      - name: 'Conditionally Download CUDA'
+      - name: Conditionally Download CUDA
         if: steps.cache-cuda.outputs.cache-hit != 'true'
         run: |
           $ErrorActionPreference = "Stop"
           Invoke-WebRequest -Uri "https://developer.download.nvidia.com/compute/cuda/12.4.0/local_installers/cuda_12.4.0_551.61_windows.exe" -OutFile "cuda-install.exe"
-      - name: 'Install CUDA'
+      - name: Install CUDA
         run: |
           $subpackages = @("cudart", "nvcc", "cublas", "cublas_dev") | foreach-object {"${_}_12.4"}
           Start-Process "cuda-install.exe" -ArgumentList (@("-s") + $subpackages) -NoNewWindow -Wait
-      - name: 'Verify CUDA'
+      - name: Verify CUDA
         run: |
           & (resolve-path "c:\Program Files\NVIDIA*\CUDA\v*\bin\nvcc.exe")[0] --version
           $cudaPath=((resolve-path "c:\Program Files\NVIDIA*\CUDA\v*\bin\nvcc.exe")[0].path | split-path | split-path)
