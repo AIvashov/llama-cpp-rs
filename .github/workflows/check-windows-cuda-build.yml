@@ -111,6 +111,9 @@ jobs:
           echo ""
           echo "Listing contents of CUDA directories..."
           
+          echo "Cuda directory:"
+          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\*
+          
           echo "Bin directory:"
           ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\bin\*"
           
