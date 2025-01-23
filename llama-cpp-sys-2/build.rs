@@ -284,7 +284,7 @@ fn main() {
             debug_log!("{}", format!("Cuda path {}", &cuda_path));
             debug_log!("{}", format!("nvcc path {}", nvcc_path.display()));
 
-            config.define("CMAKE_CUDA_COMPILER", cuda_path.clone());
+            // config.define("CMAKE_CUDA_COMPILER", cuda_path.clone());
             config.define(
                 "CMAKE_GENERATOR_TOOLSET",
                 format!("cuda={}", &cuda_path)
