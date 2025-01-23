@@ -6,9 +6,9 @@ use std::process::Command;
 
 macro_rules! debug_log {
     ($($arg:tt)*) => {
-        if std::env::var("BUILD_DEBUG").is_ok() {
-            println!("cargo:warning=[DEBUG] {}", format!($($arg)*));
-        }
+        // if std::env::var("BUILD_DEBUG").is_ok() {
+        println!("cargo:warning=[DEBUG] {}", format!($($arg)*));
+        // }
     };
 }
 
@@ -275,12 +275,18 @@ fn main() {
         if cfg!(target_os = "windows") {
             let cuda_path = env::var("CUDA_PATH")
                 .expect("Please ensure that CUDA_PATH env variable is set");
+
             let nvcc_path = Path::new(&cuda_path).join("bin/nvcc.exe");
             if !nvcc_path.exists() {
                 panic!("nvcc not found at {}", nvcc_path.display());
             }
+
+            debug_log!(format!("Cuda path {}", &cuda_path));
+            debug_log!(format!("nvcc path {}", &nvcc_path));
+
             config.define("CMAKE_CUDA_COMPILER", nvcc_path.display().to_string());
-            let cuda_lib_path = Path::new(&cuda_path).join("Lib");
+
+            let cuda_lib_path = Path::new(&cuda_path).join("lib/x64");
             println!("cargo:rustc-link-search=native={}", cuda_lib_path.display());
         }
 

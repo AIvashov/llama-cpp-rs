@@ -94,6 +94,9 @@ jobs:
           & (resolve-path "c:\Program Files\NVIDIA*\CUDA\v*\bin\nvcc.exe")[0] --version
           $cudaPath=((resolve-path "c:\Program Files\NVIDIA*\CUDA\v*\bin\nvcc.exe")[0].path | split-path | split-path)
           $cudaVer=($cudaPath | split-path -leaf ) -replace 'v(\d+).(\d+)', '$1_$2' 
+          
+          echo "Resolved CUDA_PATH: $cudaPath"
+          echo "Cuda Version: $cudaVer"
           echo "$cudaPath\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           echo "CUDA_PATH=$cudaPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "CUDA_PATH_V${cudaVer}=$cudaPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
@@ -109,13 +112,13 @@ jobs:
           echo "Listing contents of CUDA directories..."
           
           echo "Bin directory:"
-          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\bin"
+          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\bin\*"
           
           echo "Include directory:"
-          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\include"
+          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\include\*"
           
           echo "Lib directory:"
-          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\lib\x64"
+          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\lib\x64\*"
       - name: Build
         run: cargo build --release --features cuda -vv
 
