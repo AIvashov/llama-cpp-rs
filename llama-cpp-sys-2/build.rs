@@ -272,28 +272,28 @@ fn main() {
             println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
             println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
         }
-        if cfg!(target_os = "windows") {
-            let cuda_path = env::var("CUDA_PATH")
-                .expect("Please ensure that CUDA_PATH env variable is set");
-
-            let nvcc_path = Path::new(&cuda_path).join("bin").join("nvcc.exe");
-            if !nvcc_path.exists() {
-                panic!("nvcc not found at {}", nvcc_path.display());
-            }
-
-            debug_log!("{}", format!("Cuda path {}", &cuda_path));
-            debug_log!("{}", format!("nvcc path {}", nvcc_path.display()));
-
-            config.define("CMAKE_CUDA_COMPILER", cuda_path.clone());
-            // config.define(
-            //     "CMAKE_GENERATOR_TOOLSET",
-            //     format!("cuda={}", &cuda_path)
-            // );
-
-            let cuda_lib_path = Path::new(&cuda_path).join("lib").join("x64");
-            println!("cargo:rustc-link-search=native={}", cuda_lib_path.display());
-            debug_log!("{}", format!("cuda_lib_path path {}", cuda_lib_path.display()));
-        }
+        // if cfg!(target_os = "windows") {
+        //     let cuda_path = env::var("CUDA_PATH")
+        //         .expect("Please ensure that CUDA_PATH env variable is set");
+        //
+        //     let nvcc_path = Path::new(&cuda_path).join("bin").join("nvcc.exe");
+        //     if !nvcc_path.exists() {
+        //         panic!("nvcc not found at {}", nvcc_path.display());
+        //     }
+        //
+        //     debug_log!("{}", format!("Cuda path {}", &cuda_path));
+        //     debug_log!("{}", format!("nvcc path {}", nvcc_path.display()));
+        //
+        //     config.define("CMAKE_CUDA_COMPILER", cuda_path.clone());
+        //     // config.define(
+        //     //     "CMAKE_GENERATOR_TOOLSET",
+        //     //     format!("cuda={}", &cuda_path)
+        //     // );
+        //
+        //     let cuda_lib_path = Path::new(&cuda_path).join("lib").join("x64");
+        //     println!("cargo:rustc-link-search=native={}", cuda_lib_path.display());
+        //     debug_log!("{}", format!("cuda_lib_path path {}", cuda_lib_path.display()));
+        // }
 
         println!("cargo:rustc-link-lib=dylib=cuda");
         if build_shared_libs {
