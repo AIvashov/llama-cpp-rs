@@ -151,7 +151,7 @@ fn main() {
     let llama_dst = out_dir.join("llama.cpp");
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR");
     let llama_src = Path::new(&manifest_dir).join("llama.cpp");
-    let build_shared_libs = cfg!(feature = "dynamic-link") || (cfg!(windows) && cfg!(feature = "cuda"));
+    let build_shared_libs = cfg!(feature = "dynamic-link");
     let build_shared_libs = std::env::var("LLAMA_BUILD_SHARED_LIBS")
         .map(|v| v == "1")
         .unwrap_or(build_shared_libs);
@@ -272,28 +272,28 @@ fn main() {
             println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
             println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
         }
-        // if cfg!(target_os = "windows") {
-        //     let cuda_path = env::var("CUDA_PATH")
-        //         .expect("Please ensure that CUDA_PATH env variable is set");
-        //
-        //     let nvcc_path = Path::new(&cuda_path).join("bin").join("nvcc.exe");
-        //     if !nvcc_path.exists() {
-        //         panic!("nvcc not found at {}", nvcc_path.display());
-        //     }
-        //
-        //     debug_log!("{}", format!("Cuda path {}", &cuda_path));
-        //     debug_log!("{}", format!("nvcc path {}", nvcc_path.display()));
-        //     // https://github.com/ggerganov/llama.cpp/blob/f7fb43cd0b84280c261f440dc8e85eafad4a0ca6/ggml/src/ggml-cuda/CMakeLists.txt#L5
-        //     config.define("CMAKE_CUDA_ARCHITECTURES","52;61;70;75");
-        //     // // config.define(
-        //     // //     "CMAKE_GENERATOR_TOOLSET",
-        //     // //     format!("cuda={}", &cuda_path)
-        //     // // );
-        //     //
-        //     // let cuda_lib_path = Path::new(&cuda_path).join("lib").join("x64");
-        //     // println!("cargo:rustc-link-search=native={}", cuda_lib_path.display());
-        //     // debug_log!("{}", format!("cuda_lib_path path {}", cuda_lib_path.display()));
-        // }
+        if cfg!(target_os = "windows") {
+            let cuda_path = env::var("CUDA_PATH")
+                .expect("Please ensure that CUDA_PATH env variable is set");
+
+            let nvcc_path = Path::new(&cuda_path).join("bin").join("nvcc.exe");
+            if !nvcc_path.exists() {
+                panic!("nvcc not found at {}", nvcc_path.display());
+            }
+
+            debug_log!("{}", format!("Cuda path {}", &cuda_path));
+            debug_log!("{}", format!("nvcc path {}", nvcc_path.display()));
+
+            config.define("CMAKE_CUDA_COMPILER", cuda_path.clone());
+            // config.define(
+            //     "CMAKE_GENERATOR_TOOLSET",
+            //     format!("cuda={}", &cuda_path)
+            // );
+
+            let cuda_lib_path = Path::new(&cuda_path).join("lib").join("x64");
+            println!("cargo:rustc-link-search=native={}", cuda_lib_path.display());
+            debug_log!("{}", format!("cuda_lib_path path {}", cuda_lib_path.display()));
+        }
 
         println!("cargo:rustc-link-lib=dylib=cuda");
         if build_shared_libs {
@@ -316,7 +316,8 @@ fn main() {
     // General
     config
         .profile(&profile)
-        .very_verbose(std::env::var("CMAKE_VERBOSE").is_ok()) // Not verbose by default
+        .very_verbose(true) // Not verbose by default
+        // .very_verbose(std::env::var("CMAKE_VERBOSE").is_ok()) // Not verbose by default
         .always_configure(false);
 
     let build_dir = config.build();
