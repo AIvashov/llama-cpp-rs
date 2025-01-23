@@ -151,8 +151,7 @@ fn main() {
     let llama_dst = out_dir.join("llama.cpp");
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR");
     let llama_src = Path::new(&manifest_dir).join("llama.cpp");
-    // let build_shared_libs = cfg!(feature = "cuda") || cfg!(feature = "dynamic-link");
-    let build_shared_libs= false;
+    let build_shared_libs = cfg!(feature = "dynamic-link");
     let build_shared_libs = std::env::var("LLAMA_BUILD_SHARED_LIBS")
         .map(|v| v == "1")
         .unwrap_or(build_shared_libs);
@@ -273,9 +272,12 @@ fn main() {
             println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
             println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
         }
-        // if cfg!(target_os = "windows") {
-        //
-        // }
+        if cfg!(target_os = "windows") {
+            let cuda_path = env::var("CUDA_PATH")
+                .expect("Please ensure that CUDA_PATH env variable is set");
+            let cuda_lib_path = Path::new(&cuda_path).join("Lib");
+            println!("cargo:rustc-link-search=native={}", cuda_lib_path.display());
+        }
 
         println!("cargo:rustc-link-lib=dylib=cuda");
         if build_shared_libs {
