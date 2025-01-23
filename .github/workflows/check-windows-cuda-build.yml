@@ -168,7 +168,7 @@ jobs:
           set /A NINJA_JOBS=%NUMBER_OF_PROCESSORS%-1
           cmake --build build --config Release -j %NINJA_JOBS% -t ggml
           cmake --build build --config Release
-          dir build\bin\Release\
+          dir
 
 #          cargo build --release --features cuda -vv
 
