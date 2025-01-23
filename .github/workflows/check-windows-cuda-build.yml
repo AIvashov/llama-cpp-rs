@@ -112,7 +112,7 @@ jobs:
           echo "Listing contents of CUDA directories..."
           
           echo "Cuda directory:"
-          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\*
+          ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\*"
           
           echo "Bin directory:"
           ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\bin\*"
@@ -122,6 +122,8 @@ jobs:
           
           echo "Lib directory:"
           ls "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v*\lib\x64\*"
+          echo "VS directory:"
+          ls "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Microsoft\VC\*"
       - name: Build
         run: cargo build --release --features cuda -vv
 
