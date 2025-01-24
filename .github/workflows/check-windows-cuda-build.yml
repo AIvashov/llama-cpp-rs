@@ -72,8 +72,9 @@ jobs:
         run: |
           mkdir artifacts
           cp target/release/simple.exe artifacts/simple-windows-amd64-cuda124.exe
-          cp "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\bin\cublas64_12.dll" artifacts/
-          cp "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\bin\cublas64Lt_12.dll" artifacts/
+          dir "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\lib\x64"
+          cp "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\lib\x64\cublas64_12.dll" artifacts/
+          cp "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\lib\x64\cublas64Lt_12.dll" artifacts/
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
