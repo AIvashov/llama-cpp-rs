@@ -72,11 +72,12 @@ jobs:
           cp target/release/simple.exe artifacts/simple-windows-amd64-cuda124.exe
           cp "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\bin\cublas64_12.dll" artifacts/
           cp "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4\bin\cublasLt64_12.dll" artifacts/
+          powershell Compress-Archive -Path artifacts\* -DestinationPath artifacts\windows-amd64-cuda124.zip
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-amd64-cuda124-binary
-          path: artifacts/
+          path: artifacts/windows-amd64-cuda124.zip
 
 
   release:
