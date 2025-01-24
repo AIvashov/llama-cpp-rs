@@ -1,12 +1,10 @@
-name: Check windows cuda
+name: Release Build
 
 on:
   push:
-    branches:
-      - '**'
-  pull_request:
-    branches:
-      - '**'
+    tags:
+      - "v*"
+
 jobs:
   build-windows-amd64-cuda124:
     runs-on: windows-2019
@@ -79,3 +77,30 @@ jobs:
         with:
           name: windows-amd64-cuda124-binary
           path: artifacts/
+
+
+  release:
+    needs: [ build-windows-amd64-cuda124 ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Windows Cuda 12.4 Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-amd64-cuda124-binary
+          path: artifacts
+
+      - name: Generate Checksums
+        run: |
+          cd artifacts
+          for file in *; do
+            sha256sum "$file" > "$file.sha256"
+          done
+
+      - name: Upload Release Assets
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          artifacts: |
+            artifacts/*
