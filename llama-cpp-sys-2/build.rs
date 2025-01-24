@@ -265,6 +265,9 @@ fn main() {
             println!("cargo:rustc-link-lib=vulkan");
         }
     }
+    if cfg!(windows) {
+        config.generator("Ninja Multi-Config");
+    }
 
     if cfg!(feature = "cuda") {
         config.define("GGML_CUDA", "ON");
