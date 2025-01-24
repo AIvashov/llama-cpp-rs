@@ -278,7 +278,7 @@ fn main() {
         }
         
 
-        if cfg!(target_os = "windows") {
+        if cfg!(windows) {
             // https://github.com/ggerganov/llama.cpp/blob/01f37edf1a6fae76fd9e2e02109aae6995a914f0/ggml/src/ggml-cuda/CMakeLists.txt#L8
             // # native == GPUs available at build time
             // # 52     == Maxwell, lowest CUDA 12 standard
@@ -292,23 +292,17 @@ fn main() {
 
             let cuda_path = env::var("CUDA_PATH")
                 .expect("Please ensure that CUDA_PATH env variable is set");
-        
+            debug_log!("{}", format!("Cuda path {}", &cuda_path));
             let nvcc_path = Path::new(&cuda_path).join("bin").join("nvcc.exe");
             if !nvcc_path.exists() {
                 panic!("nvcc not found at {}", nvcc_path.display());
             }
-        
-            debug_log!("{}", format!("Cuda path {}", &cuda_path));
+
             debug_log!("{}", format!("nvcc path {}", nvcc_path.display()));
-        
-            // config.define("CMAKE_CUDA_COMPILER", cuda_path.clone());
-            // config.define(
-            //     "CMAKE_GENERATOR_TOOLSET",
-            //     format!("cuda={}", &cuda_path)
-            // );
-        
+
             let cuda_lib_path = Path::new(&cuda_path).join("lib").join("x64");
             println!("cargo:rustc-link-search=native={}", cuda_lib_path.display());
+
             debug_log!("{}", format!("cuda_lib_path path {}", cuda_lib_path.display()));
         }
 
@@ -322,15 +316,15 @@ fn main() {
             if cfg!(target_os = "linux") {
                 println!("cargo:rustc-link-lib=static=cublas_static");
                 println!("cargo:rustc-link-lib=static=cublasLt_static");
+                println!("cargo:rustc-link-lib=static=culibos");
+                println!("cargo:rustc-link-lib=static=cudadevrt");
             }
-            if cfg!(target_os = "windows") {
+            if cfg!(windows) {
                 // As of 12.3.1 CUDA Toolkit for Windows does not offer a static cublas library
                 // https://github.com/ggerganov/llama.cpp/blob/01f37edf1a6fae76fd9e2e02109aae6995a914f0/ggml/src/ggml-cuda/CMakeLists.txt#L80
                 println!("cargo:rustc-link-lib=dylib=cublas");
                 println!("cargo:rustc-link-lib=dylib=cublasLt");
             }
-            println!("cargo:rustc-link-lib=static=culibos");
-            println!("cargo:rustc-link-lib=static=cudadevrt");
         }
     }
 
@@ -341,7 +335,6 @@ fn main() {
     // General
     config
         .profile(&profile)
-        // .very_verbose(true) // Not verbose by default
         .very_verbose(std::env::var("CMAKE_VERBOSE").is_ok()) // Not verbose by default
         .always_configure(false);
 
