@@ -3,7 +3,7 @@ name: Release Build
 on:
   push:
     tags:
-      - "v*"
+      - "b*"
 
 jobs:
   build-windows-amd64-cuda124:
