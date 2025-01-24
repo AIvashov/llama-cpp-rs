@@ -269,11 +269,11 @@ fn main() {
     if cfg!(feature = "cuda") {
         config.define("GGML_CUDA", "ON");
     }
-    if cfg!(feature = "cuda") {
-        if cfg!(target_os = "linux") {
-            println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
-            println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
-        }
+    if cfg!(feature = "cuda") && cfg!(target_os = "linux") {
+
+        println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
+        println!("cargo:rustc-link-search=native=/usr/lib/x86_64-linux-gnu");
+
         // if cfg!(target_os = "windows") {
         //     let cuda_path = env::var("CUDA_PATH")
         //         .expect("Please ensure that CUDA_PATH env variable is set");
@@ -318,8 +318,8 @@ fn main() {
     // General
     config
         .profile(&profile)
-        .very_verbose(true) // Not verbose by default
-        // .very_verbose(std::env::var("CMAKE_VERBOSE").is_ok()) // Not verbose by default
+        // .very_verbose(true) // Not verbose by default
+        .very_verbose(std::env::var("CMAKE_VERBOSE").is_ok()) // Not verbose by default
         .always_configure(false);
 
     let build_dir = config.build();
