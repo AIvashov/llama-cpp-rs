@@ -319,8 +319,16 @@ fn main() {
             println!("cargo:rustc-link-lib=dylib=cublasLt");
         } else {
             println!("cargo:rustc-link-lib=static=cudart_static");
-            println!("cargo:rustc-link-lib=static=cublas_static");
-            println!("cargo:rustc-link-lib=static=cublasLt_static");
+            if cfg!(target_os = "linux") {
+                println!("cargo:rustc-link-lib=static=cublas_static");
+                println!("cargo:rustc-link-lib=static=cublasLt_static");
+            }
+            if cfg!(target_os = "windows") {
+                // As of 12.3.1 CUDA Toolkit for Windows does not offer a static cublas library
+                // https://github.com/ggerganov/llama.cpp/blob/01f37edf1a6fae76fd9e2e02109aae6995a914f0/ggml/src/ggml-cuda/CMakeLists.txt#L80
+                println!("cargo:rustc-link-lib=dylib=cublas");
+                println!("cargo:rustc-link-lib=dylib=cublasLt");
+            }
             println!("cargo:rustc-link-lib=static=culibos");
             println!("cargo:rustc-link-lib=static=cudadevrt");
         }
