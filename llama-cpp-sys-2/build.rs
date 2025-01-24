@@ -12,9 +12,9 @@ macro_rules! debug_log {
     };
 }
 
-fn get_cargo_target_dir() -> Result<std::path::PathBuf, Box<dyn std::error::Error>> {
-    let out_dir = std::path::PathBuf::from(std::env::var("OUT_DIR")?);
-    let profile = std::env::var("PROFILE")?;
+fn get_cargo_target_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
+    let out_dir = PathBuf::from(env::var("OUT_DIR")?);
+    let profile = env::var("PROFILE")?;
     let mut target_dir = None;
     let mut sub_path = out_dir.as_path();
     while let Some(parent) = sub_path.parent() {
@@ -31,7 +31,7 @@ fn get_cargo_target_dir() -> Result<std::path::PathBuf, Box<dyn std::error::Erro
 fn copy_folder(src: &Path, dst: &Path) {
     std::fs::create_dir_all(dst).expect("Failed to create dst directory");
     if cfg!(unix) {
-        std::process::Command::new("cp")
+       Command::new("cp")
             .arg("-rf")
             .arg(src)
             .arg(dst.parent().unwrap())
@@ -40,10 +40,12 @@ fn copy_folder(src: &Path, dst: &Path) {
     }
 
     if cfg!(windows) {
-        std::process::Command::new("robocopy.exe")
+        let src_str = src.to_str().expect("Invalid src path");
+        let dst_str = dst.to_str().expect("Invalid dst path");
+        Command::new("robocopy.exe")
             .arg("/e")
-            .arg(src)
-            .arg(dst)
+            .arg(src_str)
+            .arg(dst_str)
             .status()
             .expect("Failed to execute robocopy command");
     }
@@ -152,7 +154,7 @@ fn main() {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").expect("Failed to get CARGO_MANIFEST_DIR");
     let llama_src = Path::new(&manifest_dir).join("llama.cpp");
     let build_shared_libs = cfg!(feature = "dynamic-link");
-    let build_shared_libs = std::env::var("LLAMA_BUILD_SHARED_LIBS")
+    let build_shared_libs = env::var("LLAMA_BUILD_SHARED_LIBS")
         .map(|v| v == "1")
         .unwrap_or(build_shared_libs);
     let profile = env::var("LLAMA_LIB_PROFILE").unwrap_or("Release".to_string());
