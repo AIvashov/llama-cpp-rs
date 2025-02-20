@@ -194,6 +194,8 @@ fn main() {
         .allowlist_type("ggml_.*")
         .allowlist_function("llama_.*")
         .allowlist_type("llama_.*")
+        .allowlist_function("gguf_.*")
+        .allowlist_type("gguf_.*")
         .prepend_enum_name(false)
         .generate()
         .expect("Failed to generate bindings");

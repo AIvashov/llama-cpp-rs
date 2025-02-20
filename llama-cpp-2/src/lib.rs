@@ -30,6 +30,7 @@ pub mod sampling;
 pub mod timing;
 pub mod token;
 pub mod token_type;
+pub mod gguf;
 
 /// A failable result from a llama.cpp function.
 pub type Result<T> = std::result::Result<T, LLamaCppError>;
